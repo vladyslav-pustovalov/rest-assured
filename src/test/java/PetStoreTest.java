@@ -1,20 +1,12 @@
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
-import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.util.List;
-import java.util.Objects;
-
 public class PetStoreTest {
-    Integer id = 1145;
-    Integer newId = 1146;
+    Integer id = 1144;
     Integer categoryId = 2255;
-    Integer newCategoryId = 2256;
     String categoryName = "Hitler's Party";
-    String newCategoryName = "New Hitler's Party";
     String name = "Uncle Adolf";
     String newName = "Grand Uncle Adolf";
     String photoUrl = "https://github.com/vladyslav-pustovalov/HTML-Resume/blob/main/img/1.jpg";
@@ -39,19 +31,19 @@ public class PetStoreTest {
         /*language=JSON*/
         String createNewPetBody = """
                 {
-                  "id": \"%s\",
+                  "id": "%s",
                   "category": {
-                    "id": \"%s\",
-                    "name": \"%s\"
+                    "id": "%s",
+                    "name": "%s"
                   },
-                  "name": \"%s\",
+                  "name": "%s",
                   "tags": [
                       {
-                        "id": \"%s\",
-                        "name": \"%s\"
+                        "id": "%s",
+                        "name": "%s"
                       }
                     ],
-                  "status": \"%s\"
+                  "status": "%s"
                 }
                 """.formatted(id, categoryId, categoryName, name, tagId, tagName, status);
 
@@ -105,7 +97,7 @@ public class PetStoreTest {
         /*language=JSON*/
         String updatePetsStatusBody = """
                 {
-                  "status": \"%s"
+                  "status": "%s"
                 }
                 """.formatted(newStatus);
 
@@ -125,20 +117,20 @@ public class PetStoreTest {
         /*language=JSON*/
         String updatePetBody = """
                 {
-                  "id": \"%s\",
+                  "id": "%s",
                   "category": {
-                    "id": \"%s\",
-                    "name": \"%s\"
+                    "id": "%s",
+                    "name": "%s"
                   },
-                  "name": \"%s\",
-                  "photoUrls": \"%s\",
+                  "name": "%s",
+                  "photoUrls": "%s",
                   "tags": [
                       {
-                        "id": \"%s\",
-                        "name": \"%s\"
+                        "id": "%s",
+                        "name": "%s"
                       }
                     ],
-                  "status": \"%s\"
+                  "status": "%s"
                 }
                 """.formatted(id, categoryId, categoryName, newName, photoUrl, newTagId, newTagName, status);
 
