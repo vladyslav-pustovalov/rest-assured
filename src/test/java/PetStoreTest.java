@@ -39,7 +39,7 @@ public class PetStoreTest {
     public void setup() {
 
         Spec.installSpec(
-                Spec.requestSpec("https://petstore.swagger.io", "/v2"),
+                Spec.requestSpec("https://petstore3.swagger.io", "/api/v3"),
                 Spec.responseSpec()
         );
     }
@@ -177,7 +177,6 @@ public class PetStoreTest {
                     .get("/pet/"+id)
                 .then()
                     .assertThat()
-                        .statusCode(404)
-                        .body("message", Matchers.equalTo("Pet not found"));
+                        .statusCode(404);
     }
 }
