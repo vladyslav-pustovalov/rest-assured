@@ -1,21 +1,39 @@
 import io.restassured.RestAssured;
+import models.Category;
+import models.Pet;
+import models.Status;
+import models.Tag;
 import org.hamcrest.Matchers;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
+
+import java.util.Collections;
+import java.util.List;
 
 public class PetStoreTest {
     Integer id = 1144;
     Integer categoryId = 2255;
-    String categoryName = "Hitler's Party";
-    String name = "Uncle Adolf";
-    String newName = "Grand Uncle Adolf";
-    String photoUrl = "https://github.com/vladyslav-pustovalov/HTML-Resume/blob/main/img/1.jpg";
+    Integer newCategoryId = 2256;
+    String categoryName = "Cats";
+    String newCategoryName = "NewCats";
+    String name = "Sima";
+    String newName = "Also Sima";
+    String photoUrl = "https://media.gettyimages.com/id/1361767161/photo/cat-meowing-yawning-laughing-with-rose-gold-pink-background.jpg?s=2048x2048&w=gi&k=20&c=DX9NZLNkDEF9BZ5hevh0JIfV5YLzXU9bo81YG1PNwv0=";
+    String newPhotoUrl = "https://github.com/vladyslav-superunlimited/test-files/blob/f7d65243bbbe7a9d00ccaa12598e45ed1433bacf/turbo.jpg";
     Integer tagId = 3366;
     Integer newTagId = 3367;
     String tagName = "someTag";
-    String newTagName = "someOtherTag";
-    String status = "available";
-    String newStatus = "sold";
+    String newTagName = "otherTag";
+    String status = Status.AVAILABLE;
+    String newStatus = Status.SOLD;
+
+    Category cats = new Category(categoryId, categoryName);
+    Category cats2 = new Category(newCategoryId, newCategoryName);
+    Tag tag1 = new Tag(tagId, tagName);
+    Tag tag2 = new Tag(newTagId, newTagName);
+    Pet sima = new Pet(id, cats, name, Collections.singletonList(photoUrl), Collections.singletonList(tag1), status);
+    Pet updatedSima = new Pet(id, cats2, newName, Collections.singletonList(newPhotoUrl), Collections.singletonList(tag2), newStatus);
 
     @BeforeClass
     public void setup() {
@@ -26,74 +44,48 @@ public class PetStoreTest {
         );
     }
 
-    @Test
+    @Test(priority = 1)
     public void createPetByPost() {
-        /*language=JSON*/
-        String createNewPetBody = """
-                {
-                  "id": "%s",
-                  "category": {
-                    "id": "%s",
-                    "name": "%s"
-                  },
-                  "name": "%s",
-                  "tags": [
-                      {
-                        "id": "%s",
-                        "name": "%s"
-                      }
-                    ],
-                  "status": "%s"
-                }
-                """.formatted(id, categoryId, categoryName, name, tagId, tagName, status);
 
-        RestAssured
+        Pet pet = RestAssured
                 .given()
                 .when()
-                    .body(createNewPetBody)
+                    .body(sima)
                     .post("/pet")
                 .then()
                     .assertThat()
                         .statusCode(200)
-                        .body("id", Matchers.equalTo(id))
-                        .body("category.id", Matchers.equalTo(categoryId))
-                        .body("category.name", Matchers.equalTo(categoryName))
-                        .body("name", Matchers.equalTo(name))
-                        .body("tags[0].id", Matchers.equalTo(tagId))
-                        .body("tags[0].name", Matchers.equalTo(tagName))
-                        .body("status", Matchers.equalTo(status));
+                    .extract().body().as(Pet.class);
+
+        Assert.assertEquals(sima, pet);
     }
 
-//    @Test
-//    public void uploadPetsImageByPost() {
-//        /*language=JSON*/
-//        String updatePetsImageBody = """
-//                {
-//                  "file": \"%s"
-//                }
-//                """.formatted(photoUrl);
-//
-//        RestAssured
-//                .given()
-//                .when()
-//                .body(updatePetsImageBody)
-//                .accept("application/json")
-//                .contentType("multipart/form-data")
-//                .post("/pet/"+id+"/uploadImage")
-//                .then()
-//                .assertThat()
-//                .statusCode(200)
-//                .body("id", Matchers.equalTo(id))
-//                .body("category.id", Matchers.equalTo(categoryId))
-//                .body("category.name", Matchers.equalTo(categoryName))
-//                .body("name", Matchers.equalTo(name))
-//                .body("tags[0].id", Matchers.equalTo(tagId))
-//                .body("tags[0].name", Matchers.equalTo(tagName))
-//                .body("status", Matchers.equalTo(status));
-//    }
+    @Test(priority = 2)
+    public void uploadPetsImageByPost() {
+        /*language=JSON*/
+        String updatePetsImageBody = """
+                {
+                  "file": \"%s"
+                }
+                """.formatted(photoUrl);
 
-    @Test
+        RestAssured
+                .given()
+                    .accept("application/json")
+                    .contentType("multipart/form-data")
+                    .body(updatePetsImageBody)
+                .when()
+                    .post("/pet/"+id+"/uploadImage")
+                .then()
+                    .assertThat()
+                        .statusCode(200)
+                        .body("photoUrls", Matchers.equalTo("photoUrls[0]"));
+    }
+
+    @Test(priority = 3)
     public void updatePetsStatusByPost() {
+        String changedStatus = Status.PENDING;
+
         /*language=JSON*/
         String updatePetsStatusBody = """
                 {
@@ -104,91 +96,72 @@ public class PetStoreTest {
         RestAssured
                 .given()
                 .when()
-                .body(updatePetsStatusBody)
-                .contentType("application/x-www-form-urlencoded")
-                .post("/pet/"+id)
+                    .body(updatePetsStatusBody)
+                    .contentType("application/x-www-form-urlencoded")
+                    .post("/pet/"+id)
                 .then()
-                .assertThat()
-                .statusCode(200);
-    }
+                    .assertThat()
+                        .statusCode(200);
 
-    @Test
-    public void updatePetByPut() {
-        /*language=JSON*/
-        String updatePetBody = """
-                {
-                  "id": "%s",
-                  "category": {
-                    "id": "%s",
-                    "name": "%s"
-                  },
-                  "name": "%s",
-                  "photoUrls": "%s",
-                  "tags": [
-                      {
-                        "id": "%s",
-                        "name": "%s"
-                      }
-                    ],
-                  "status": "%s"
-                }
-                """.formatted(id, categoryId, categoryName, newName, photoUrl, newTagId, newTagName, status);
-
-        RestAssured
+        Pet pet = RestAssured
                 .given()
                 .when()
-                    .body(updatePetBody)
+                .get("/pet/"+id)
+                .then()
+                    .assertThat()
+                        .statusCode(200)
+                    .extract().body().as(Pet.class);
+
+        Assert.assertEquals(pet.getStatus(), changedStatus);
+    }
+
+    @Test(priority = 4)
+    public void updatePetByPut() {
+
+        Pet pet = RestAssured
+                .given()
+                    .body(updatedSima)
+                .when()
                     .put("/pet")
                 .then()
                     .assertThat()
                         .statusCode(200)
-                        .body("id", Matchers.equalTo(id))
-                        .body("category.id", Matchers.equalTo(categoryId))
-                        .body("category.name", Matchers.equalTo(categoryName))
-                        .body("name", Matchers.equalTo(newName))
-                        .body("photoUrls", Matchers.equalTo(photoUrl))
-                        .body("tags[0].id", Matchers.equalTo(tagId))
-                        .body("tags[0].name", Matchers.equalTo(tagName))
-                        .body("tags[1].id", Matchers.equalTo(newTagId))
-                        .body("tags[1].name", Matchers.equalTo(tagName))
-                        .body("status", Matchers.equalTo(newStatus));
+                    .extract().body().as(Pet.class);
+
+        Assert.assertEquals(pet, updatedSima);
     }
 
-    @Test
+    @Test(priority = 5)
     public void getPetById() {
-        RestAssured
+
+        Pet pet = RestAssured
                 .given()
                 .when()
                     .get("/pet/"+id)
                 .then()
                     .assertThat()
                         .statusCode(200)
-                        .body("id", Matchers.equalTo(id))
-                        .body("category.id", Matchers.equalTo(categoryId))
-                        .body("category.name", Matchers.equalTo(categoryName))
-                        .body("name", Matchers.equalTo(newName))
-                        .body("photoUrls", Matchers.equalTo(photoUrl))
-                        .body("tags[0].id", Matchers.equalTo(tagId))
-                        .body("tags[0].name", Matchers.equalTo(tagName))
-                        .body("tags[1].id", Matchers.equalTo(newTagId))
-                        .body("tags[1].name", Matchers.equalTo(tagName))
-                        .body("status", Matchers.equalTo(newStatus));
+                    .extract().body().as(Pet.class);
+
+        Assert.assertEquals(pet, updatedSima);
     }
 
-    @Test
+    @Test(priority = 6)
     public void getPetsByStatus() {
-        RestAssured
+
+        List<Pet> pets = RestAssured
                 .given()
                 .when()
                     .get("/pet/findByStatus?status="+newStatus)
                 .then()
                     .assertThat()
                         .statusCode(200)
-                        .body("[0].id", Matchers.equalTo(id))
-                        .body("[0].status", Matchers.equalTo(newStatus));
+                        .extract().body().jsonPath().getList("", Pet.class);
+
+        Assert.assertTrue(pets.contains(updatedSima), "Sima is not presented in this list");
     }
 
-    @Test
+    @Test(priority = 7)
     public void deletePetById() {
         RestAssured
                 .given()
@@ -197,5 +170,14 @@ public class PetStoreTest {
                 .then()
                     .assertThat()
                         .statusCode(200);
+
+        RestAssured
+                .given()
+                .when()
+                    .get("/pet/"+id)
+                .then()
+                    .assertThat()
+                        .statusCode(404)
+                        .body("message", Matchers.equalTo("Pet not found"));
     }
 }
