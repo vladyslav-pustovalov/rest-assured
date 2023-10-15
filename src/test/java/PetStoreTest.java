@@ -1,4 +1,6 @@
 import io.restassured.RestAssured;
+import io.restassured.config.EncoderConfig;
+import io.restassured.http.ContentType;
 import models.Category;
 import models.Pet;
 import models.Status;
@@ -71,8 +73,8 @@ public class PetStoreTest {
 
         RestAssured
                 .given()
-                    .accept("application/json")
-                    .contentType("multipart/form-data")
+                    .contentType("application/octet-stream")
+                    .config(RestAssured.config().encoderConfig(EncoderConfig.encoderConfig().encodeContentTypeAs("application/octet-stream", ContentType.TEXT)))
                     .body(updatePetsImageBody)
                 .when()
                     .post("/pet/"+id+"/uploadImage")

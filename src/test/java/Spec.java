@@ -12,6 +12,7 @@ public class Spec {
         return new RequestSpecBuilder()
                 .setBaseUri(baseUri)
                 .setBasePath(basePath)
+                .setAccept(ContentType.JSON)
                 .setContentType(ContentType.JSON)
                 .log(LogDetail.ALL)
                 .build();
