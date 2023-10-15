@@ -164,6 +164,21 @@ public class PetStoreTest {
     }
 
     @Test(priority = 7)
+    public void getPetsByTag() {
+
+        List<Pet> pets = RestAssured
+                .given()
+                .when()
+                .get("/pet/findByTags?tags="+tag2.getName())
+                .then()
+                .assertThat()
+                .statusCode(200)
+                .extract().body().jsonPath().getList("", Pet.class);
+
+        Assert.assertTrue(pets.contains(updatedSima), "Sima is not presented in this list");
+    }
+
+    @Test(priority = 8)
     public void deletePetById() {
         RestAssured
                 .given()
