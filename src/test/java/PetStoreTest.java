@@ -49,8 +49,8 @@ public class PetStoreTest {
 
         Pet pet = RestAssured
                 .given()
-                .when()
                     .body(sima)
+                .when()
                     .post("/pet")
                 .then()
                     .assertThat()
@@ -65,7 +65,7 @@ public class PetStoreTest {
         /*language=JSON*/
         String updatePetsImageBody = """
                 {
-                  "file": \"%s"
+                  "file": "%s"
                 }
                 """.formatted(photoUrl);
 
@@ -91,13 +91,13 @@ public class PetStoreTest {
                 {
                   "status": "%s"
                 }
-                """.formatted(newStatus);
+                """.formatted(changedStatus);
 
         RestAssured
                 .given()
-                .when()
-                    .body(updatePetsStatusBody)
                     .contentType("application/x-www-form-urlencoded")
+                    .body(updatePetsStatusBody)
+                .when()
                     .post("/pet/"+id)
                 .then()
                     .assertThat()
@@ -106,7 +106,7 @@ public class PetStoreTest {
         Pet pet = RestAssured
                 .given()
                 .when()
-                .get("/pet/"+id)
+                    .get("/pet/"+id)
                 .then()
                     .assertThat()
                         .statusCode(200)
