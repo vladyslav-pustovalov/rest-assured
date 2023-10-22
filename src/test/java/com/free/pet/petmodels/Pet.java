@@ -1,4 +1,4 @@
-package models;
+package com.free.pet.petmodels;
 
 import com.fasterxml.jackson.annotation.*;
 

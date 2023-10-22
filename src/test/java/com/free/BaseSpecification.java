@@ -1,3 +1,5 @@
+package com.free;
+
 import io.restassured.RestAssured;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.builder.ResponseSpecBuilder;
@@ -6,26 +8,24 @@ import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import io.restassured.specification.ResponseSpecification;
 
-public class Spec {
+public class BaseSpecification {
 
-    public static RequestSpecification requestSpec(String baseUri, String basePath) {
+    public static RequestSpecification requestSpecification() {
         return new RequestSpecBuilder()
-                .setBaseUri(baseUri)
-                .setBasePath(basePath)
                 .setAccept(ContentType.JSON)
                 .setContentType(ContentType.JSON)
                 .log(LogDetail.ALL)
                 .build();
     }
 
-    public static ResponseSpecification responseSpec() {
+    public static ResponseSpecification responseSpecification() {
         return new ResponseSpecBuilder()
                 .log(LogDetail.ALL)
                 .build();
     }
 
-    public static void installSpec(RequestSpecification requestSpec, ResponseSpecification responseSpec) {
-        RestAssured.requestSpecification = requestSpec;
-        RestAssured.responseSpecification = responseSpec;
+    public static void installSpec() {
+        RestAssured.requestSpecification = BaseSpecification.requestSpecification();
+        RestAssured.responseSpecification = BaseSpecification.responseSpecification();
     }
 }

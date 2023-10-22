@@ -15,6 +15,7 @@
         <apache-common-lang.version>3.13.0</apache-common-lang.version>
         <log4j.version>2.20.0</log4j.version>
         <jackson.version>2.15.2</jackson.version>
+        <hamcrest.version>2.2</hamcrest.version>
         <assertj.version>3.24.2</assertj.version>
         <testng.version>7.8.0</testng.version>
         <rest-assured.version>5.3.2</rest-assured.version>
@@ -50,6 +51,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>${hamcrest.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>${assertj.version}</version>
@@ -65,6 +72,12 @@
             <groupId>io.rest-assured</groupId>
             <artifactId>rest-assured</artifactId>
             <version>${rest-assured.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.javafaker</groupId>
+            <artifactId>javafaker</artifactId>
+            <version>1.0.2</version>
         </dependency>
     </dependencies>
 
