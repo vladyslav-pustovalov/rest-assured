@@ -19,6 +19,7 @@
         <assertj.version>3.24.2</assertj.version>
         <testng.version>7.8.0</testng.version>
         <rest-assured.version>5.3.2</rest-assured.version>
+        <java-faker.version>1.0.2</java-faker.version>
     </properties>
 
     <dependencies>
@@ -77,7 +78,7 @@
         <dependency>
             <groupId>com.github.javafaker</groupId>
             <artifactId>javafaker</artifactId>
-            <version>1.0.2</version>
+            <version>${java-faker.version}</version>
         </dependency>
     </dependencies>
 
