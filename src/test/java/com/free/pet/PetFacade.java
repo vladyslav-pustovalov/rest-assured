@@ -3,7 +3,6 @@ package com.free.pet;
 import com.free.StatusCode;
 import com.free.pet.petmodels.Pet;
 import io.restassured.RestAssured;
-import io.restassured.response.ResponseBody;
 
 public class PetFacade {
 
